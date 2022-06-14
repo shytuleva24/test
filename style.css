@@ -17,11 +17,11 @@ body {
 main {
     position: fixed;
     bottom: 0;
+    top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.5);
     color: #f1f1f1;
     width: 100%;
-    min-height: 100%;
     z-index: 10;
     text-align: center;
 }
@@ -48,13 +48,14 @@ h1 {
 }
 
 .text {
-    margin: 100px auto;
+    margin: 54px auto;
     width: 90%;
     font-size: 22px;
 }
 
 select, .btn {
     width: 200px;
+    padding: 10px;
     height: 50px;
     margin: 0 30px;
     background-color: transparent;
@@ -71,6 +72,11 @@ select, .btn {
 
 option {
     color: black;
+    padding-left: 10px;
+}
+
+select option:first-child  {
+    display: none;
 }
 
 

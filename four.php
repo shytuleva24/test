@@ -11,11 +11,11 @@
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
-      <source src="https://vod-progressive.akamaized.net/exp=1655209877~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=f5ed908975ac5e35c73a18aeba31546a0df30da7e477fbeb652c2d174093157b/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
+        <source src="https://vod-progressive.akamaized.net/exp=1655233849~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=348fdb7ed1d29eafbf539644388b24bb5be615d8e9a8330c6b1776aedeb62b10/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
     </video>
     <main>
         <section>
-            <form action="three.php" method="POST">
+            <form action="result.php" method="POST">                
                 <h1>Гра екстрасенс</h1>
                 <p class="title">Спробуй свої можливості</p>
                 <p class="text">Нажаль ти не вгадав, та не переймайся. Ми зменшили діапазон, спробуй тепер вгадати.<br>У тебе все вийде!</p>
@@ -27,52 +27,58 @@
                     $password = "".$complicatedPsychic->password;
                     $loss = 0;
 
-                    echo "<h2>$password</h2>";
+                    echo $complicatedPsychic->password;
                     if ($password[1] < 6) {
                         $numberStart = floor(($complicatedPsychic->password-1)/10)*10+1;
                     } else {
                         $numberStart = floor(($complicatedPsychic->password-1)/10)*10+6;
                     }
                     $numberEnd = $numberStart + 4;
-                    $t = count($disabledNumbers) - 1;
 
-                    if (isset($_POST['number'])) {
-                        $number = $_POST['number'];
-                        if ($password == $number) {
-                            echo "<p>WIN</p>";
-                            $complicatedPsychic->win++;
-                            header('Location: result.php');
-                        } else {
-                            if ($password < $disabledNumbers[$t]) {
-                                echo "<p class='text'>Загадане число менше від числа обраного вами!</p>";
-                            } else if ($password > $disabledNumbers[$t]) {
-                                echo "<p class='text'>Загадане число більше від числа обраного вами!</p>";
-                            }
-                            $loss++;
-                            $complicatedPsychic->totalLoss++;
-                            array_push($disabledNumbers , $number);
-                            if ($loss != 0) {
-                                header('Location: result.php');
-                            }
-                        }
-                    }
-                    var_dump($disabledNumbers);
+                    $numberMemorization = (isset($_POST["numberMemorization"])) ? $_POST["numberMemorization"] : 0;
+                    echo $numberMemorization;
+                    
                     echo ("<p>");
                     echo ("<select name='number'>");
-                        for($i = $numberStart; $i <= $numberEnd; $i++) {
-                            if (in_array($i, $disabledNumbers)) {
-                                echo ("<option value='$i' disabled>$i</option>");
-                            } 
+                    echo ("<option value='0'>Обери число</option>");
+                    for($i = $numberStart; $i <= $numberEnd; $i++) {
+                        if (in_array($i, $disabledNumbers)) {
+                            echo ("<option value='$i' disabled>$i</option>");
+                            $numberMemorization = $i;
+                        } 
                             else {
                                 echo ("<option value='$i'>$i</option>");
+                                $numberMemorization = $i;
                             }
                         }
-                    echo ("</select>");
+                        echo ("</select>");
+                        echo "<input class='btn b' type='submit' name='sub' value='Спробувати'></p>";
+
+                        if (isset($_POST['number'])) {
+                            $number = $_POST['number'];
+                            echo $_POST['number'];
+                            
+                            if ($complicatedPsychic->password != $number) {
+                                $complicatedPsychic->number = $number;
+                                array_push($disabledNumbers, $number);
+                                echo $complicatedPsychic->number;
+                                if ($complicatedPsychic->password > $complicatedPsychic->number) {
+                                    echo "<p class='text'>Загадане число більше від числа обраного вами!</p>";
+                                } else if ($complicatedPsychic->password < $complicatedPsychic->number) {
+                                    echo "<p class='text'>Загадане число менше від числа обраного вами!</p>";
+                                }
+                                $loss++;
+                                $complicatedPsychic->totalLoss++;
+                            } else {
+                                echo "<p>WIN</p>";
+                                $complicatedPsychic->win++;
+                                }
+                            }
 
                     $_SESSION["complicatedPsychic"] = json_encode($complicatedPsychic);
                     $_SESSION["disabledNumbers"] = json_encode($disabledNumbers);
                 ?>
-            <input class="btn b" type="submit" name="sub" value="Спробувати"></p>
+            <input type="hidden" name="number" value="<?php echo ($_POST['number']); ?>">
         </form>
         </section>
     </main>

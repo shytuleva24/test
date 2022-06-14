@@ -11,7 +11,7 @@
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
-      <source src="https://vod-progressive.akamaized.net/exp=1655209877~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=f5ed908975ac5e35c73a18aeba31546a0df30da7e477fbeb652c2d174093157b/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
+        <source src="https://vod-progressive.akamaized.net/exp=1655233849~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=348fdb7ed1d29eafbf539644388b24bb5be615d8e9a8330c6b1776aedeb62b10/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
     </video>
     <main>
         <section>
@@ -22,12 +22,15 @@
                 <?php
                     session_start();
                     if (isset($_POST['new'])) {
-                        session_destroy();
+                        session_unset();
+                        unset($_SESSION["complicatedPsychic"]);
                         unset($complicatedPsychic->password);
-                        header("refresh: 0;");
+                        // session_destroy();
                     }
+
                     class PsychicData {
                         public $password = 0;
+                        public $number = 0;
                         public $disabledNumbers = [];
                         public $win = 0;
                         public $totalLoss = 0;
@@ -42,11 +45,12 @@
                         $password = rand(1, 100);
                         $complicatedPsychic->password = $password;
                     }
-
                     echo $complicatedPsychic->password;
-                    // echo "<h2>$password</h2>";
-                    if (isset($_POST['number'])) {
-                            $number = $_POST['number'];
+
+
+                    // echo $complicatedPsychic->password;
+                    if (isset($_POST['number']) && $_POST['number'] != "00 - 00") {
+                        $number = $_POST['number'];
                             explode(" - ", $number);
                             $start = explode(" - ", $number)[0];
                             $end = explode(" - ", $number)[1];
@@ -62,10 +66,7 @@
                                 }
             
                             }
-                            // echo $complicatedPsychic->totalLoss;
-                            // echo $complicatedPsychic->win;
-                            $complicatedPsychic->disabledNumbers = $disabledNumbers;
-                            // var_dump($complicatedPsychic->disabledNumbers);
+                         $complicatedPsychic->disabledNumbers = $disabledNumbers;
                         }
                         echo ("<p>");
                         echo ("<select class='select' name='number'>");
@@ -86,7 +87,6 @@
                     $_SESSION["disabledNumbers"] = json_encode($disabledNumbers);
                 ?>
                 <input class="btn b" type="submit" name="sub" value="Спробувати"></p>
-                <button class="btn t" type="submit" name="new"><a href="index.php">Нова гра!</a></button>
             </form>
         </section>
     </main>

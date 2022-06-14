@@ -11,51 +11,52 @@
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
-      <source src="https://vod-progressive.akamaized.net/exp=1655209877~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=f5ed908975ac5e35c73a18aeba31546a0df30da7e477fbeb652c2d174093157b/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
+      <source src="https://vod-progressive.akamaized.net/exp=1655233849~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=348fdb7ed1d29eafbf539644388b24bb5be615d8e9a8330c6b1776aedeb62b10/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
     </video>
     <main>
         <section>
-            <form action="two.php" method="POST">
-                <h1>Гра екстрасенс</h1>
-                <p class="title">Спробуй свої можливості</p>
-                <p class="text">Тепер спробуй вгадати саме число. В тебе є лише одна спроба тому добре подумай та обери його зі списку нижче.<br>У тебе все вийде!</p>
+        <form action="three.php" method="POST">
+            <h1>Гра екстрасенс</h1>
+            <p class="title">Спробуй свої можливості</p>
                 <?php 
                     session_start();
-
-                    $complicatedPsychic = json_decode($_SESSION["complicatedPsychic"]);
-                    $disabledNumbers = (isset($_SESSION["disabledNumbers"])) ? json_decode($_SESSION["disabledNumbers"]) : [];
+                    $complicatedPsychic = json_decode($_SESSION['complicatedPsychic']);
+                    $disabledNumbers = (isset($_SESSION['disabledNumbers'])) ? json_decode($_SESSION['disabledNumbers']) : [];
                     $password = $complicatedPsychic->password;
+                    $number = (isset($_POST['number'])) ? $_POST['number'] : "00 - 00";
                     $loss = 0;
+                    // echo $complicatedPsychic->password;
+                    // var_dump($disabledNumbers);
+
+                    $numberStart = floor(($complicatedPsychic->password-1)/10)*10+1;
+                    $numberEnd = $numberStart + 9;
+
+                
+                    if ($complicatedPsychic->totalLoss == 0) {
+                        echo "<p class='text'>В тебе дуже гарно виходить, ти вгадав, так тримати!</p>";
+                    } else if (count($disabledNumbers) != 0) {
+                        echo "<p class='text'>Шкода, але ти не вгадав!</p>";
+                    }
+
+                    echo "<p class='text'>Тепер спробуй вгадати саме число. В тебе є лише одна спроба тому добре подумай та обери його зі списку нижче.<br>У тебе все вийде!</p>";
                     echo $complicatedPsychic->password;
 
 
-                    // echo "<h2>$password</h2>";
-                    $numberStart = floor(($complicatedPsychic->password-1)/10)*10+1;
-                    $numberEnd = $numberStart + 9;
-                        // echo $numberStart;
-                        // echo $numberEnd;
-                    if ($complicatedPsychic->totalLoss == 0) {
-                        echo "<p class='text'>В тебе дуже гарно виходить, так тримати!</p>";
-
-                    }
-
-                    if (isset($_POST['number'])) {
+                    if (isset($_POST['number']) && $_POST['number'] != "00 - 00") {
                         $number = $_POST['number'];
                         if ($password == $number) {
-                            $complicatedPsychic->win++;
                             header('Location: result.php');
+                            $complicatedPsychic->win++;
                         } else {
                             $loss++;
                             $complicatedPsychic->totalLoss++;
                             array_push($disabledNumbers , $number);
                             echo "<p>Ви не вгадали, спробуйте ще!</p>";
-                            if (($complicatedPsychic->totalLoss < 4 && $complicatedPsychic->win == 0) || ($complicatedPsychic->totalLoss < 2 && $complicatedPsychic->win != 0) || $loss !=0) {
-                                header('Location: three.php');
-                            }
                         }
                     }
                     echo ("<p>");
                     echo ("<select name='number'>");
+                    echo ("<option value='0'>Обери число</option>");
                         for($i = $numberStart; $i <= $numberEnd; $i++) {
                             if (in_array($i, $disabledNumbers)) {
                                 echo ("<option value='$i' disabled>$i</option>");
