@@ -11,14 +11,14 @@
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
-        <source src="https://vod-progressive.akamaized.net/exp=1655233849~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=348fdb7ed1d29eafbf539644388b24bb5be615d8e9a8330c6b1776aedeb62b10/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
+        <source src="https://vod-progressive.akamaized.net/exp=1655302142~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=ca8257d179e93c83ff55057592ad38e058229c9781f2c30b4cac630f5d43ab2d/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
     </video>
     <main>
         <section>
             <form action="index.php" method="POST">
                 <h1>Гра екстрасенс</h1>
                 <p class="title">Спробуй свої можливості</p>
-                <p class="text">Вгадай діапазон, в якому знакодиться загадане комп'ютером число. Для цього лише потрібно обрати його з випадаючого списку нижче. <br>У тебе все вийде!</p>
+                <p class="text">Вгадай діапазон, в якому знаходиться загадане комп'ютером число. Для цього лише потрібно обрати його з випадаючого списку нижче. <br>У тебе все вийде!</p>
                 <?php
                     session_start();
                     if (isset($_POST['new'])) {
@@ -30,8 +30,6 @@
 
                     class PsychicData {
                         public $password = 0;
-                        public $number = 0;
-                        public $disabledNumbers = [];
                         public $win = 0;
                         public $totalLoss = 0;
                     }
@@ -45,11 +43,11 @@
                         $password = rand(1, 100);
                         $complicatedPsychic->password = $password;
                     }
-                    echo $complicatedPsychic->password;
+                    // echo $complicatedPsychic->password;
 
 
                     // echo $complicatedPsychic->password;
-                    if (isset($_POST['number']) && $_POST['number'] != "00 - 00") {
+                    if (isset($_POST['number'])) {
                         $number = $_POST['number'];
                             explode(" - ", $number);
                             $start = explode(" - ", $number)[0];
@@ -59,17 +57,18 @@
                                 header('Location: two.php');
                             } else {
                                 $complicatedPsychic->totalLoss++;
-                                array_push($disabledNumbers , $number);
+                                array_push($disabledNumbers, $number);
                                 echo "<p>Ви не вгадали, спробуйте ще!</p>";
                                 if ($complicatedPsychic->totalLoss == 3) {
                                     header('Location: two.php');
                                 }
             
                             }
-                         $complicatedPsychic->disabledNumbers = $disabledNumbers;
                         }
                         echo ("<p>");
                         echo ("<select class='select' name='number'>");
+                        echo ("<option value='0'>Обери діапазон</option>");
+
                             for($i = 0; $i <= 99; $i+=10) {
                                 $start = $i + 1;
                                 $end = $i + 10;

@@ -11,7 +11,7 @@
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
-        <source src="https://vod-progressive.akamaized.net/exp=1655233849~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=348fdb7ed1d29eafbf539644388b24bb5be615d8e9a8330c6b1776aedeb62b10/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
+        <source src="https://vod-progressive.akamaized.net/exp=1655302142~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1767%2F11%2F283838731%2F1067680830.mp4~hmac=ca8257d179e93c83ff55057592ad38e058229c9781f2c30b4cac630f5d43ab2d/vimeo-prod-skyfire-std-us/01/1767/11/283838731/1067680830.mp4?filename=Cosmos+-+17692.mp4" type="video/mp4">
     </video>
     <main>
         <section>
@@ -27,13 +27,31 @@
                         session_unset();
                         header('Location: index.php');
                     }
+
                     $complicatedPsychic = json_decode($_SESSION["complicatedPsychic"]);
                     $disabledNumbers = (isset($_SESSION["disabledNumbers"])) ? json_decode($_SESSION["disabledNumbers"]) : [];
                     $password = "".$complicatedPsychic->password;
+                    if (isset($_POST['number'])) {
+                        $number = $_POST['number']; 
+                    } else {
+                        $number = 0;
+                    } 
+                    // var_dump($disabledNumbers);
+
+                    if (($number == $complicatedPsychic->password && $complicatedPsychic->totalLoss < 2) || $complicatedPsychic->totalLoss == 0) {
+                        echo "<p class='text'>З тебе вийде чудовий екстрасенс!</p>";
+                    } else if ($number == $complicatedPsychic->password && $complicatedPsychic->totalLoss < 7) {
+                        echo "<p class='text'>Eкстрасенсорні здібності у тебе на мінімумі!</p>";
+                    } else if ($complicatedPsychic->win == 0 && $complicatedPsychic->totalLoss < 7){
+                        echo "<p class='text'>Ти не вгадав, задумайся над чимось іншим!</p>";
+                    } else {
+                        echo "<p class='text'>З тебе вийде такий собі екстрасенс!</p>";
+                    }
+                    
                     // var_dump ($disabledNumbers);
-                    echo "<br>$complicatedPsychic->win<br>";
-                    echo "$complicatedPsychic->totalLoss<br>";
-                    echo $complicatedPsychic->password;
+                    // echo "<br>$complicatedPsychic->win<br>";
+                    // echo "$complicatedPsychic->totalLoss<br>";
+                    // echo $complicatedPsychic->password;
 
                     $_SESSION["complicatedPsychic"] = json_encode($complicatedPsychic);
                     $_SESSION["disabledNumbers"] = json_encode($disabledNumbers);
